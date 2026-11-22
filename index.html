@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#121212">
-<title>Ежедневник Pro v3.7</title>
+<title>Ежедневник Pro v3.7 — Сделано СИМ с Алисой</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📔</text></svg>">
 <style>
 :root{--bg:#121212;--surface:#1e1e1e;--surface-2:#282828;--primary:#4f8ef7;--text:#fff;--text-muted:#999;--border:#333;--danger:#e5484d;--success:#30a46c;--warning:#f5a623;--thought:#a855f7;--state:#38bdf8;--desire:#f472b6;--event:#14b8a6;--goal:#eab308;--problem:#6366f1;--solution:#f97316;--skill:#22c55e;--neg:#ef4444;--toast-bg:#2a2a2a}
@@ -65,6 +65,16 @@ body{background:var(--bg);color:var(--text);padding:14px;max-width:640px;margin:
 .mini-badge.score{color:var(--thought);border-color:rgba(168,85,247,.4)}
 .mini-badge.state{color:var(--state);border-color:rgba(56,189,248,.4)}
 .mini-badge.desire{color:var(--desire);border-color:rgba(244,114,182,.4)}
+.mini-badge.type-badge{font-weight:700}
+.mini-badge.tb-task{color:var(--warning);border-color:rgba(245,166,35,.4)}
+.mini-badge.tb-action{color:var(--success);border-color:rgba(48,164,108,.4)}
+.mini-badge.tb-event{color:var(--event);border-color:rgba(20,184,166,.4)}
+.mini-badge.tb-goal{color:var(--goal);border-color:rgba(234,179,8,.4)}
+.mini-badge.tb-problem{color:var(--problem);border-color:rgba(99,102,241,.4)}
+.mini-badge.tb-thought{color:var(--thought);border-color:rgba(168,85,247,.4)}
+.mini-badge.tb-state{color:var(--state);border-color:rgba(56,189,248,.4)}
+.mini-badge.tb-desire{color:var(--desire);border-color:rgba(244,114,182,.4)}
+.mini-badge.tb-solution{color:var(--solution);border-color:rgba(249,115,22,.4)}
 .mini-badge.event{color:var(--event);border-color:rgba(20,184,166,.4)}
 .mini-badge.goal{color:var(--goal);border-color:rgba(234,179,8,.4)}
 .mini-badge.problem{color:var(--problem);border-color:rgba(99,102,241,.4)}
@@ -230,7 +240,7 @@ textarea{resize:vertical;min-height:75px}
 <body>
 
 <div class="top-bar">
-  <div class="app-title">Ежедневник Pro</div>
+  <div class="app-title">Ежедневник Pro — Сделано СИМ с Алисой</div>
   <div class="top-actions">
     <button class="icon-btn active" id="navTodayBtn" onclick="switchView('today')">📅 Сегодня</button>
     <button class="icon-btn" id="navProjectsBtn" onclick="switchView('projects')">📁 Проекты</button>
@@ -324,15 +334,17 @@ textarea{resize:vertical;min-height:75px}
     <div class="help-tab active" id="revTabStats" onclick="setReviewTab('stats')">📈 Статистика</div>
     <div class="help-tab" id="revTabStates" onclick="setReviewTab('states')">🙂 Состояния</div>
     <div class="help-tab" id="revTabDesires" onclick="setReviewTab('desires')">💛 Желания</div>
-    <div class="help-tab" id="revTabNotes" onclick="setReviewTab('notes')">🗒 Заметки</div>
-    <div class="help-tab" id="revTabProblems" onclick="setReviewTab('problems')">🧩 Проблемы</div>
     <div class="help-tab" id="revTabJournal" onclick="setReviewTab('journal')">🗒 Журнал</div>
+    <div class="help-tab" id="revTabNotes" onclick="setReviewTab('notes')">📝 Заметки</div>
+    <div class="help-tab" id="revTabProblems" onclick="setReviewTab('problems')">🧩 Проблемы</div>
     <div class="help-tab" id="revTabExport" onclick="setReviewTab('export')">📤 Экспорт</div>
   </div>
   <div id="revBodyStats"></div>
   <div id="revBodyStates" style="display:none;"></div>
-  <div id="revBodyDesires" style="display:none;"></div><div id="revBodyNotes" style="display:none;"></div><div id="revBodyProblems" style="display:none;"></div>
+  <div id="revBodyDesires" style="display:none;"></div>
   <div id="revBodyJournal" style="display:none;"></div>
+  <div id="revBodyNotes" style="display:none;"></div>
+  <div id="revBodyProblems" style="display:none;"></div>
   <div id="revBodyExport" style="display:none;"></div>
 </div>
 
@@ -358,7 +370,7 @@ textarea{resize:vertical;min-height:75px}
     <div class="form-group" id="categoryGroup"><label class="form-label">Категория</label><div class="cat-chips" id="catChips"></div></div>
     <div class="form-group" id="difficultyGroup"><label class="form-label"><span id="difficultyLabel">Сложность (1–10) = XP</span>: <strong id="difficultyVal">5</strong></label><div class="range-row"><input type="range" id="itemDifficulty" min="1" max="10" value="5" oninput="document.getElementById('difficultyVal').textContent=this.value"></div></div>
     <div class="form-group" id="dayScoreGroup" style="display:none;"><label class="form-label">Оценка дня: <strong id="dayScoreVal">7</strong> / 10</label><div class="range-row"><input type="range" id="itemDayScore" min="1" max="10" value="7" oninput="document.getElementById('dayScoreVal').textContent=this.value"></div></div>
-    <div class="form-group" id="thoughtSourceGroup" style="display:none;"><label class="form-label">Связано с</label><div style="display:flex;gap:6px;"><select id="itemRefType" onchange="buildRefObjectSelect()" style="max-width:130px;"><option value="">—</option><option value="project">Проект</option><option value="treenode">Навык</option><option value="task">Задача</option><option value="action">Действие</option><option value="problem">Проблема</option><option value="event">Событие</option><option value="goal">Цель</option><option value="solution">Решение</option><option value="thought">Мысль</option><option value="state">Состояние</option><option value="desire">Желание</option></select><select id="itemRefObject"></select></div></div>
+    <div class="form-group" id="thoughtSourceGroup" style="display:none;"><label class="form-label">Связано с</label><div style="display:flex;gap:6px;"><select id="itemRefType" onchange="buildRefObjectSelect()" style="max-width:130px;"><option value="">—</option><option value="project">Проект</option><option value="treenode">Навык</option><option value="task">Задача</option><option value="action">Действие</option><option value="problem">Проблема</option><option value="thought">Мысль</option><option value="state">Состояние</option><option value="desire">Желание</option><option value="event">Событие</option><option value="goal">Цель</option><option value="solution">Решение</option></select><select id="itemRefObject"></select></div></div>
     <div class="form-group" id="thoughtAttitudeGroup" style="display:none;"><label class="form-label">Отношение: <strong id="attitudeVal">0</strong></label><select id="itemAttitude" onchange="document.getElementById('attitudeVal').textContent=this.value"><option value="-2">😞 −2</option><option value="-1">🙁 −1</option><option value="0" selected>😐 0</option><option value="1">🙂 +1</option><option value="2">😄 +2</option></select></div>
 
     <div class="form-group" id="stateTemplateGroup" style="display:none;">
@@ -464,7 +476,7 @@ textarea{resize:vertical;min-height:75px}
   <div class="modal-sheet">
     <div class="modal-header"><div class="modal-title" id="projectModalTitle">Новый проект</div><button class="close-modal" onclick="closeModal('projectModal')">✕</button></div>
     <div class="form-group"><label class="form-label">Название *</label><input type="text" id="projName"></div>
-    <div class="form-group"><label class="form-label">Родительский</label><select id="projParentSelect"></select></div>
+    <div class="form-group"><label class="form-label">Родительский</label><select id="projParentSelect" onchange="onProjParentChange()"></select></div>
     <div class="form-group"><label class="form-label">Описание</label><textarea id="projDesc"></textarea></div>
     <div class="form-group"><label class="form-label">Цвет</label><input type="color" id="projColor" value="#4f8ef7" style="height:42px;padding:4px;width:100%;background:var(--bg);border:1px solid var(--border);border-radius:10px;"></div>
     <div style="display:flex;gap:8px;margin-top:16px;"><button class="small-btn danger-btn" id="deleteProjBtn" style="display:none;padding:12px;" onclick="deleteProject()">Удалить</button><button class="primary-btn" style="flex:1;padding:12px;" onclick="saveProject()">Сохранить</button></div>
@@ -489,6 +501,7 @@ textarea{resize:vertical;min-height:75px}
     <div class="form-group"><label class="form-label">Иконка</label><input type="text" id="stIcon" placeholder="🌳" maxlength="4"><div class="icon-chips" id="chips_stIcon"></div></div>
     <div class="form-group"><label class="form-label">Описание</label><textarea id="stDesc"></textarea></div>
     <div class="form-group"><label class="form-label">Негативное дерево (опыт отнимается)</label><div class="reminder-toggle"><input type="checkbox" id="stNegative"><span>Да</span></div></div>
+    <div class="form-group"><label class="form-label">Цвет корня</label><input type="color" id="stColor" value="#3b82f6" style="height:42px;padding:4px;width:100%;background:var(--bg);border:1px solid var(--border);border-radius:10px;"></div>
     <div style="display:flex;gap:8px;margin-top:16px;"><button class="small-btn danger-btn" id="deleteStBtn" style="display:none;padding:12px;" onclick="deleteSkillTree()">Удалить</button><button class="primary-btn" style="flex:1;padding:12px;" onclick="saveSkillTree()">Сохранить</button></div>
   </div>
 </div>
@@ -496,7 +509,7 @@ textarea{resize:vertical;min-height:75px}
   <div class="modal-sheet">
     <div class="modal-header"><div class="modal-title" id="skillNodeModalTitle">Новый навык</div><button class="close-modal" onclick="closeModal('skillNodeModal')">✕</button></div>
     <div class="form-group" id="snTreeGroup"><label class="form-label">Дерево</label><select id="snTree" onchange="onSnTreeChange()"></select></div>
-    <div class="form-group" id="snParentGroup"><label class="form-label">Родительский навык</label><select id="snParent"></select><div class="hint-text">Навык всегда привязывается к родителю — выберите узел или корень дерева (пометка «(корень)»).</div></div>
+    <div class="form-group" id="snParentGroup"><label class="form-label">Родительский навык</label><select id="snParent" onchange="onSnParentChange()"></select><div class="hint-text">Навык всегда привязывается к родителю — выберите узел или корень дерева (пометка «(корень)»).</div></div>
     <div class="form-group"><label class="form-label">Название *</label><input type="text" id="snName"></div>
     <div class="form-group"><label class="form-label">Иконка</label><input type="text" id="snIcon" placeholder="⭐" maxlength="4"><div class="icon-chips" id="chips_snIcon"></div></div>
     <div class="form-group"><label class="form-label">Описание</label><textarea id="snDesc"></textarea></div>
@@ -630,12 +643,12 @@ textarea{resize:vertical;min-height:75px}
       </ul>
     </div>
     <div class="help-body" id="helpBodyHistory" style="display:none;">
-      <div class="help-entry"><div class="help-version">Версия 3.7</div><ul>
+      <div class="help-entry"><div class="help-version">Версия 3.7</div><ul><li>Сделано СИМ с Алисой</li>
         <li>Новый тип записи «🛠 Решение»: закрывает проблему (переводит её в «решена») и начисляет XP = сложность проблемы × множитель — по образцу связки «задача → действие».</li>
         <li>У проблемы появились сложность (база XP) и навык; у решения — привязка к проблеме, множитель и мысли-помощники (мысли с привязкой к проблеме).</li>
         <li>Кнопка «🛠 Решить…» в предпросмотре проблемы открывает форму решения; «↩ Открыта» возвращает проблему в открытые и снимает отметку решения.</li>
         <li>Мысли можно привязывать к проблеме; в предпросмотре мысли видно, в каком решении она помогла.</li>
-        <li>«⚡ XP за день» учитывает опыт от решений; CSV — колонка closesProblemId; схема базы v11.</li><li>Заметки — свободные записи: 📊 Обзор → 🗒 Заметки (добавление, правка, удаление).</li><li>Проблемы — сводка: 📊 Обзор → 🧩 Проблемы (открыто, решено за 90 дней, ср. острота, ср. срок, XP от решений).</li>
+        <li>«⚡ XP за день» учитывает опыт от решений; CSV — колонка closesProblemId; схема базы v11.</li>
       </ul></div>
       <div class="help-entry"><div class="help-version">Версия 3.6</div><ul>
         <li>Дерево навыков: корень выбирается по умолчанию, редактируемый узел исключён из списка родителя; добавлена кнопка «✏️ Дерево» для редактирования и удаления дерева.</li>
@@ -743,7 +756,7 @@ let currentFormOutgoingLinks=[];
 let closingTaskId=null;
 let currentFormHelpers=[];
 let editingProjectId=null;
-let reviewTab='stats';let reviewProblemFilter='all';let editingNoteId=null;
+let reviewTab='stats';
 let journalPeriod=7;
 let activeSkillTreeId=null;
 let editingSkillTreeId=null;
@@ -758,7 +771,7 @@ let db={
   schemaVersion:10,
   projects:[{id:'proj_general',name:'Общее',parentId:null,color:'#4f8ef7',desc:'Базовый проект',mindmap:[]}],
   items:[],
-  trash:[],notes:[],
+  trash:[],
   traps:[],helpNotes:[],aiAnalyses:[],
   skillTrees:[],
   skillCategories:[
@@ -798,7 +811,7 @@ function convertScaleValues(){
 }
 function migrateDb(){
   if(!db.schemaVersion)db.schemaVersion=1;
-  ['traps','helpNotes','aiAnalyses','skillTrees','skillLinks','nodeLinks','stateTemplates','desireTemplates','notes'].forEach(k=>{if(!Array.isArray(db[k]))db[k]=[];});
+  ['traps','helpNotes','aiAnalyses','skillTrees','skillLinks','nodeLinks','stateTemplates','desireTemplates'].forEach(k=>{if(!Array.isArray(db[k]))db[k]=[];});
   if(!Array.isArray(db.skillCategories)||!db.skillCategories.length)db.skillCategories=[
     {id:'sc_active',name:'Активная',color:'#22c55e'},
     {id:'sc_passive',name:'Пассивная',color:'#3b82f6'},
@@ -875,7 +888,11 @@ function migrateDb(){
       if(it.type==='solution'&&!Number.isFinite(it.xpAwarded))it.xpAwarded=0;
     });
   }
-  db.schemaVersion=11;
+  if(db.schemaVersion<12){
+    if(!Array.isArray(db.notes))db.notes=[];
+    db.skillTrees.forEach(t=>{if(!t.color)t.color='#3b82f6';});
+  }
+  db.schemaVersion=12;
 }
 let _saveTimer=null,_saveDirty=false,_saveIndTimer=null;
 function writeDbNow(){try{localStorage.setItem('planner_pro_v2',JSON.stringify(db));_saveDirty=false;showSaveIndicator();return true;}catch(e){console.error(e);toast('Не удалось сохранить','danger');return false;}}
@@ -1145,7 +1162,7 @@ function removeFocus(date=null){
   renderDayItems();
 }
 function sourceLabel(item){if(item.parentActionId){const a=db.items.find(x=>x.id===item.parentActionId);if(a)return '↳ из действия: '+a.title;}if(item.closedByActionId){const a=db.items.find(x=>x.id===item.closedByActionId);if(a)return '✔ закрыта: '+a.title;}if(item.closedBySolutionId){const s=db.items.find(x=>x.id===item.closedBySolutionId);if(s)return '🛠 решено: '+s.title;}if(item.closesTaskId){const t=db.items.find(x=>x.id===item.closesTaskId);if(t)return '✔ закрыла: '+t.title;}if(item.closesProblemId){const p=db.items.find(x=>x.id===item.closesProblemId);if(p)return '🧩 решает: '+p.title;}return '';}
-const TYPE_BADGE={task:'⏳ задача',action:'⚡ действие',thought:'💭 мысль',state:'🙂 состояние',desire:'💛 желание',event:'📅 событие',goal:'🎯 цель',problem:'🧩 проблема',solution:'🛠 решение'};
+const TYPE_LABELS={task:['⏳ Задача','tb-task'],action:['⚡ Действие','tb-action'],event:['📅 Событие','tb-event'],goal:['🎯 Цель','tb-goal'],problem:['🧩 Проблема','tb-problem'],thought:['💭 Мысль','tb-thought'],state:['🙂 Состояние','tb-state'],desire:['💛 Желание','tb-desire'],solution:['🛠 Решение','tb-solution']};
 function createCompactCard(item){
   const card=document.createElement('div');
   const isTask=item.type==='task',isAction=item.type==='action',isThought=item.type==='thought',isState=item.type==='state',isDesire=item.type==='desire';
@@ -1155,18 +1172,15 @@ function createCompactCard(item){
   const locked=isTask&&!isClosed&&!isTaskUnlocked(item);
   card.className=`compact-card type-${item.type}${isClosed?' closed':''}${isOverdue?' overdue':''}${locked?' locked':''}`;
   const cat=CATEGORIES[item.category];const src=sourceLabel(item);
-  const badges=[];
-  badges.push(`<span class="mini-badge">${TYPE_BADGE[item.type]||''}</span>`);
+  const badges=[];const TL=TYPE_LABELS[item.type];
+  if(TL)badges.push(`<span class="mini-badge type-badge ${TL[1]}">${TL[0]}</span>`);
   if(item.focusDate===selectedDate)badges.push('<span class="mini-badge">🎯 фокус</span>');
   if(isTask&&isClosed)badges.push('<span class="mini-badge">✔ закрыта</span>');
-  
   if(isThought)badges.push(`<span class="mini-badge score">💭 ${item.score||7}/10</span>`);
   if(isState)badges.push(`<span class="mini-badge state">🙂 ${moodBadge(item.moodScore!=null?item.moodScore:0)}</span>`);
   if(isDesire)badges.push(`<span class="mini-badge desire">💛 ${moodBadge(item.strength!=null?item.strength:0)} · ${item.desireStatus||'active'}</span>`);
-  
   if(isGoal)badges.push(`<span class="mini-badge goal">🎯 ${item.goalStatus==='done'?'достигнута':'активна'}</span>`);
   if(isProblem){const sol=item.closedBySolutionId?db.items.find(x=>x.id===item.closedBySolutionId):null;badges.push(`<span class="mini-badge problem">🧩 ${item.problemStatus==='solved'?(sol?('решена · 🛠 '+sol.title):'решена'):'открыта'}${item.severity?` · ${moodBadge(item.severity)}`:''}</span>`);}
-  
   if(cat)badges.push(`<span class="mini-badge cat" style="background:${cat.color}">${cat.icon}</span>`);
   if(isTask)badges.push(`<span class="mini-badge complexity">⚙ ${item.difficulty||5} XP</span>`);
   if(isTask&&item.skillNodeId){
@@ -1175,8 +1189,9 @@ function createCompactCard(item){
   }
   if(locked)badges.push(`<span class="mini-badge lock">🔒 заблокирована</span>`);
   if(item.time)badges.push(`<span class="mini-badge">${escapeHtml(item.time)}</span>`);
-  card.innerHTML=`<div class="compact-title">${escapeHtml(item.title)}</div>${item.desc?`<div class="compact-desc">${escapeHtml(item.desc)}</div>`:''}<div class="compact-badges">${badges.join('')}<button class="mini-badge" style="cursor:pointer" onclick="event.stopPropagation();openThoughtForItem('${item.id}')">💭</button>${src?`<span class="mini-badge">${escapeHtml(src)}</span>`:''}</div>`;
+  card.innerHTML=`<div class="compact-title">${escapeHtml(item.title)}</div>${item.desc?`<div class="compact-desc">${escapeHtml(item.desc)}</div>`:''}<div class="compact-badges">${badges.join('')}${src?`<span class="mini-badge">${escapeHtml(src)}</span>`:''}</div>`;
   card.onclick=()=>openPreview(item.id);
+  const thBtn=document.createElement('button');thBtn.className='small-btn';thBtn.style.marginTop='6px';thBtn.textContent='💭 Мысль';thBtn.onclick=(e)=>{e.stopPropagation();openThoughtForItem(item);};card.appendChild(thBtn);
   return card;
 }
 
@@ -1242,7 +1257,8 @@ function openPreview(itemId){
   </div>`;
   document.getElementById('previewBody').innerHTML=renderTokensInHtml(html);
   const actions=document.getElementById('previewActions');
-    if(item.type==='task'){
+  if(item.type!=='thought')Promise.resolve().then(()=>{const tb=document.createElement('button');tb.className='small-btn';tb.textContent='💭 Мысль';tb.onclick=()=>{closeModal('previewModal');openThoughtForItem(item);};actions.appendChild(tb);});
+  if(item.type==='task'){
     actions.innerHTML=`
       <button class="small-btn" onclick="closeModal('previewModal');openEditItemModal('${item.id}')">✏️ Изменить</button>
       <button class="small-btn danger-btn" onclick="deleteItem('${item.id}')">🗑 Удалить</button>
@@ -1266,8 +1282,6 @@ function openPreview(itemId){
   }else{
     actions.innerHTML=`<button class="small-btn" onclick="closeModal('previewModal');openEditItemModal('${item.id}')">✏️ Изменить</button><button class="small-btn danger-btn" onclick="deleteItem('${item.id}')">🗑 Удалить</button>`;
   }
-  const tb=document.createElement('button');tb.className='small-btn';tb.textContent='💭 Мысль';
-  tb.onclick=()=>{closeModal('previewModal');openThoughtForItem(item.id);};actions.appendChild(tb);
   document.getElementById('previewBody').querySelectorAll('.checklist input[type="checkbox"]').forEach(cb=>{
     cb.onchange=()=>{const idx=parseInt(cb.dataset.ci,10);const lines=(item.desc||'').split('\n');const m=lines[idx]&&lines[idx].match(/^-\s*\[([ xX])\]\s*(.*)$/);if(m){lines[idx]=`- [${cb.checked?'x':' '}] ${m[2]}`;item.desc=lines.join('\n');saveDb(true);openPreview(itemId);}};
   });
@@ -1775,7 +1789,7 @@ async function createTasksFromMindmap(){
 function openProjectModal(id=null,defaultParent=null){
   editingProjectId=id;const del=document.getElementById('deleteProjBtn');
   if(id){const p=getProjectById(id);if(!p)return;document.getElementById('projectModalTitle').textContent='Редактировать';document.getElementById('projName').value=p.name;document.getElementById('projDesc').value=p.desc||'';document.getElementById('projColor').value=safeColor(p.color);buildProjectOptions(document.getElementById('projParentSelect'),p.parentId||'',getDescendantProjectIds(p.id),true);del.style.display=db.projects.length>1?'block':'none';}
-  else{document.getElementById('projectModalTitle').textContent=defaultParent?'Новый подпроект':'Новый проект';document.getElementById('projName').value='';document.getElementById('projDesc').value='';document.getElementById('projColor').value='#4f8ef7';buildProjectOptions(document.getElementById('projParentSelect'),defaultParent||'',[],true);del.style.display='none';}
+  else{document.getElementById('projectModalTitle').textContent=defaultParent?'Новый подпроект':'Новый проект';document.getElementById('projName').value='';document.getElementById('projDesc').value='';{const pp=defaultParent?getProjectById(defaultParent):null;document.getElementById('projColor').value=pp?safeColor(pp.color):'#4f8ef7';}buildProjectOptions(document.getElementById('projParentSelect'),defaultParent||'',[],true);del.style.display='none';}
   document.getElementById('projectModal').classList.add('open');
 }
 function saveProject(){
@@ -1829,7 +1843,7 @@ function renderSkills(){
       const own=n.xp||0;const total=totalXPOfNode(tree,n.id);
       const card=document.createElement('div');
       card.className='skill-card'+(tree.isNegative?' negative':'')+(n.isRoot?' root':'');
-      card.style.borderColor=cat.color;card.id='skill-dom-'+n.id;
+      card.style.borderColor=(n.isRoot&&tree.color)?tree.color:cat.color;card.id='skill-dom-'+n.id;
       const maxXP=Math.max(50,total);
       const pct=Math.min(100,Math.round(total/maxXP*100));
       card.innerHTML=`<div class="skill-card-top"><div class="skill-card-icon">${n.icon}</div><div><div class="skill-card-title">${escapeHtml(n.title)}${n.isRoot?' 🌳':''}</div><div class="skill-card-sub">${cat.name} · ${tree.isNegative?'−':'+'} ${total} XP (свой ${own})</div></div></div><div class="skill-xp-bar"><div class="skill-xp-fill ${tree.isNegative?'neg':''}" style="width:${pct}%"></div></div>`;
@@ -1874,20 +1888,20 @@ function drawSkillConnections(tree){
   canvas.appendChild(svg);
 }
 function openSkillTreeModal(){editingSkillTreeId=null;document.getElementById('skillTreeModalTitle').textContent='Новое дерево навыков';document.getElementById('stName').value='';document.getElementById('stIcon').value='🌳';document.getElementById('stDesc').value='';document.getElementById('stNegative').checked=false;document.getElementById('deleteStBtn').style.display='none';renderIconChips('stIcon');renderIconChips('stIcon');document.getElementById('skillTreeModal').classList.add('open');}
-function openSkillTreeEdit(id){editingSkillTreeId=id;const tr=db.skillTrees.find(t=>t.id===id);if(!tr){toast('Сначала создайте дерево','danger');return;}document.getElementById('skillTreeModalTitle').textContent='Редактировать дерево';document.getElementById('stName').value=tr.name;document.getElementById('stIcon').value=tr.icon;document.getElementById('stDesc').value=tr.desc||'';document.getElementById('stNegative').checked=!!tr.isNegative;document.getElementById('deleteStBtn').style.display='block';renderIconChips('stIcon');document.getElementById('skillTreeModal').classList.add('open');}
+function openSkillTreeEdit(id){editingSkillTreeId=id;const tr=db.skillTrees.find(t=>t.id===id);if(!tr){toast('Сначала создайте дерево','danger');return;}document.getElementById('skillTreeModalTitle').textContent='Редактировать дерево';document.getElementById('stName').value=tr.name;document.getElementById('stIcon').value=tr.icon;document.getElementById('stDesc').value=tr.desc||'';document.getElementById('stNegative').checked=!!tr.isNegative;document.getElementById('stColor').value=safeColor(tr.color||'#3b82f6');document.getElementById('deleteStBtn').style.display='block';renderIconChips('stIcon');document.getElementById('skillTreeModal').classList.add('open');}
 function saveSkillTree(){
-  const name=document.getElementById('stName').value.trim();const icon=document.getElementById('stIcon').value.trim()||'🌳';const desc=document.getElementById('stDesc').value.trim();const neg=document.getElementById('stNegative').checked;
+  const name=document.getElementById('stName').value.trim();const icon=document.getElementById('stIcon').value.trim()||'🌳';const desc=document.getElementById('stDesc').value.trim();const neg=document.getElementById('stNegative').checked;const stColor=safeColor((document.getElementById('stColor')||{value:'#3b82f6'}).value);
   if(!name){toast('Введите название','danger');return;}
   if(editingSkillTreeId){
     const tr=db.skillTrees.find(t=>t.id===editingSkillTreeId);
     if(tr){
-      tr.name=name;tr.icon=icon;tr.desc=desc;tr.isNegative=neg;
+      tr.name=name;tr.icon=icon;tr.desc=desc;tr.isNegative=neg;tr.color=stColor;
       const root=tr.nodes.find(n=>n.isRoot||!n.parentId);
       if(root){root.title=name;root.icon=icon;root.desc=desc;}
     }
   }else{
     const rootNode={id:generateId(),title:name,icon,desc,categoryId:'sc_passive',xp:0,parentId:null,level:0,isRoot:true};
-    const newTree={id:generateId(),name,icon,desc,isNegative:neg,rootId:rootNode.id,nodes:[rootNode]};
+    const newTree={id:generateId(),name,icon,desc,isNegative:neg,rootId:rootNode.id,nodes:[rootNode],color:stColor};
     db.skillTrees.push(newTree);activeSkillTreeId=newTree.id;
   }
   closeModal('skillTreeModal');saveDb();toast('Сохранено','success');
@@ -2152,8 +2166,8 @@ function saveSkillLink(){
 }
 
 // ===== ОБЗОР =====
-function setReviewTab(tab){reviewTab=tab;['stats','states','desires','notes','problems','journal','export'].forEach(t=>{const c=t[0].toUpperCase()+t.slice(1);const te=document.getElementById('revTab'+c);if(te)te.classList.toggle('active',t===tab);const be=document.getElementById('revBody'+c);if(be)be.style.display=t===tab?'block':'none';});renderReviewTab();}
-function renderReviewTab(){if(reviewTab==='stats')renderStats();else if(reviewTab==='states')renderStates();else if(reviewTab==='desires')renderDesires();else if(reviewTab==='notes')renderNotes();else if(reviewTab==='problems')renderProblems();else if(reviewTab==='journal')renderJournal();else if(reviewTab==='export')renderExportPanel();}
+function setReviewTab(tab){reviewTab=tab;['stats','states','desires','journal','notes','problems','export'].forEach(t=>{const c=t[0].toUpperCase()+t.slice(1);const te=document.getElementById('revTab'+c);if(te)te.classList.toggle('active',t===tab);const be=document.getElementById('revBody'+c);if(be)be.style.display=t===tab?'block':'none';});renderReviewTab();}
+function renderReviewTab(){if(reviewTab==='stats')renderStats();else if(reviewTab==='states')renderStates();else if(reviewTab==='desires')renderDesires();else if(reviewTab==='journal')renderJournal();else if(reviewTab==='notes')renderNotes();else if(reviewTab==='problems')renderProblems();else if(reviewTab==='export')renderExportPanel();}
 function renderStats(){
   const box=document.getElementById('revBodyStats');
   const s7=periodStart(7),s30=periodStart(30);
@@ -2223,39 +2237,6 @@ function openDesireTemplates(){renderDesireTemplatesList();document.getElementBy
 function renderDesireTemplatesList(){const box=document.getElementById('desireTemplatesList');box.innerHTML=db.desireTemplates.map(t=>`<div class="template-row"><div><div class="template-name">${escapeHtml(t.name)}</div><div class="template-sub">${escapeHtml(t.desc||'')} · ${moodBadge(t.strength)}</div></div><button class="small-btn danger-btn" onclick="deleteDesireTemplate('${escapeAttr(t.id)}')">✕</button></div>`).join('')||'<div class="empty-msg" style="padding:12px;">Шаблонов нет.</div>';}
 function addDesireTemplate(){const name=document.getElementById('newDesireName').value.trim();const desc=document.getElementById('newDesireDesc').value.trim();const st=parseInt(document.getElementById('newDesireStrength').value,10)||0;if(!name){toast('Введите название','danger');return;}db.desireTemplates.push({id:generateId(),name,desc,strength:st});document.getElementById('newDesireName').value='';document.getElementById('newDesireDesc').value='';document.getElementById('newDesireStrength').value='0';saveDb(true);renderDesireTemplatesList();toast('Добавлено','success');}
 function deleteDesireTemplate(id){const t=db.desireTemplates.find(x=>x.id===id);if(t){db.desireTemplates=db.desireTemplates.filter(x=>x.id!==id);trashPush('desireTemplate',t);}saveDb(true);renderDesireTemplatesList();toast('Удалено — восстановить в корзине 🗑');}
-
-// ===== МИНИ-В: ЗАМЕТКИ =====
-function renderNotes(){const box=document.getElementById('revBodyNotes');if(!box)return;
-  const rows=db.notes.slice().sort((a,b)=>b.date.localeCompare(a.date)).map(n=>`<div class="list-row"><div style="display:flex;justify-content:space-between;gap:8px;align-items:flex-start;"><div style="min-width:0;"><div class="list-row-title">${escapeHtml(n.text)}</div><div class="list-row-sub">${formatDisplayDate(n.date)}</div></div><div style="display:flex;gap:4px;flex-shrink:0;"><button class="small-btn" onclick="startEditNote('${n.id}')">✏️</button><button class="small-btn danger-btn" onclick="deleteNote('${n.id}')">🗑</button></div></div></div>`).join('');
-  box.innerHTML=`<div class="section-card"><div class="section-title"><span>🗒 Заметки</span></div><textarea id="noteInput" placeholder="Новая заметка..."></textarea><div style="display:flex;gap:6px;margin-top:8px;"><button class="primary-btn" onclick="saveNote()">${editingNoteId?'Обновить':'Добавить'}</button>${editingNoteId?'<button class="small-btn" onclick="cancelEditNote()">Отмена</button>':''}</div>${db.notes.length?rows:'<div class="empty-msg">Заметок пока нет</div>'}</div>`;}
-function saveNote(){const ta=document.getElementById('noteInput');const txt=ta?ta.value.trim():'';if(!txt){toast('Введите текст заметки','danger');return;}
-  if(editingNoteId){const n=db.notes.find(x=>x.id===editingNoteId);if(n)n.text=txt;editingNoteId=null;if(ta)ta.value='';toast('Заметка обновлена','success');}
-  else{db.notes.push({id:generateId(),text:txt,date:todayKey});if(ta)ta.value='';toast('Заметка добавлена','success');}
-  saveDb();renderReviewTab();}
-function startEditNote(id){const n=db.notes.find(x=>x.id===id);if(!n)return;editingNoteId=id;const ta=document.getElementById('noteInput');if(ta){ta.value=n.text;ta.focus();}}
-function cancelEditNote(){editingNoteId=null;const ta=document.getElementById('noteInput');if(ta)ta.value='';renderReviewTab();}
-function deleteNote(id){uiConfirm('Удалить заметку?').then(ok=>{if(!ok)return;db.notes=db.notes.filter(x=>x.id!==id);saveDb();renderReviewTab();toast('Заметка удалена','success');});}
-
-// ===== ШАГ 2: ПРОБЛЕМЫ =====
-function dayDiff(a,b){return Math.max(0,Math.round((new Date(a)-new Date(b))/86400000));}
-function statBox(num,cap){return `<div class="stat-box"><div class="stat-num">${num}</div><div class="stat-cap">${cap}</div></div>`;}
-function renderProblems(){const box=document.getElementById('revBodyProblems');if(!box)return;
-  const all=db.items.filter(i=>i.type==='problem');
-  const open=all.filter(p=>p.problemStatus!=='solved').sort((a,b)=>(b.severity||0)-(a.severity||0));
-  const solved=all.filter(p=>p.problemStatus==='solved'&&p.doneDate).sort((a,b)=>b.doneDate.localeCompare(a.doneDate));
-  const ps=periodStart(90);const solved90=solved.filter(p=>p.doneDate>=ps);
-  const avgSev=open.length?open.reduce((a,p)=>a+(p.severity||0),0)/open.length:0;
-  const dur=p=>{if(!p.closedBySolutionId)return null;const s=db.items.find(x=>x.id===p.closedBySolutionId);return s?dayDiff(s.date||p.doneDate,p.date):null;};
-  const withDur=solved90.map(p=>dur(p)).filter(d=>d!=null);
-  const avgDur=withDur.length?withDur.reduce((a,d)=>a+d,0)/withDur.length:null;
-  const xp90=solved90.reduce((a,p)=>a+(p.xpAwarded||0),0);
-  const list=(reviewProblemFilter==='open'?open:reviewProblemFilter==='solved'?solved:open.concat(solved));
-  const rows=list.map(p=>{const d=dur(p);const sub=p.problemStatus==='solved'?(p.closedBySolutionId?`🛠 ${escapeHtml((db.items.find(x=>x.id===p.closedBySolutionId)||{}).title||'решение')}${d!=null?` · срок ${d} дн.`:''}`:'решена вручную'):'открыта';
-    return `<div class="list-row" onclick="openPreview('${p.id}')"><div class="list-row-title">${escapeHtml(p.title)} ${moodBadge(p.severity||0)}</div><div class="list-row-sub">${sub}${p.xpAwarded?` · +${p.xpAwarded} XP`:''}</div></div>`;}).join('');
-  const chips=['all','open','solved'].map(t=>{const lbl=t==='all'?'Все':t==='open'?'Открытые':'Решённые';const c=t[0].toUpperCase()+t.slice(1);return `<div class="filter-chip${reviewProblemFilter===t?' active':''}" id="pbFilter${c}" onclick="setProblemFilter('${t}')">${lbl}</div>`;}).join('');
-  box.innerHTML=`<div class="stats-row">${statBox(open.length,'Открыто')}${statBox(solved90.length,'Решено (90 дней)')}${statBox(moodBadge(avgSev),'Ср. острота')}${statBox(avgDur!=null?avgDur.toFixed(1):'—','Ср. срок (дн.)')}${statBox(xp90,'XP от решений')}</div><div class="section-card"><div class="section-title"><span>🧩 Проблемы</span><button class="small-btn" onclick="openItemModal();selectItemType('problem')">+ Проблема</button></div><div class="filter-bar">${chips}</div>${list.length?rows:'<div class="empty-msg">Пусто</div>'}</div>`;}
-function setProblemFilter(f){reviewProblemFilter=f;['all','open','solved'].forEach(t=>{const e=document.getElementById('pbFilter'+t[0].toUpperCase()+t.slice(1));if(e)e.classList.toggle('active',t===f);});renderProblems();}
-
 function renderJournal(){
   const box=document.getElementById('revBodyJournal');
   const start=periodStart(journalPeriod);
@@ -2320,9 +2301,43 @@ function renderTokensInHtml(html){if(!html)return html;return html.replace(/\[\[
 function refBadge(r){let label='';if(r.type==='project'){const p=getProjectById(r.id);if(p)label='📁 '+p.name;}else if(r.type==='treenode'){const nd=findSkillNode(r.id);if(nd){const tr=findSkillTreeByNode(nd.id);label=(tr?tr.icon+' ':'')+nd.title;}}else{const it=db.items.find(x=>x.id===r.id);if(it)label=it.title;}return label?`<span class="mini-badge ref-chip" data-rt="${r.type}" data-rid="${r.id}" style="cursor:pointer;">🔗 ${escapeHtml(label)}</span>`:'';}
 function openRefObject(t,id){if(t==='project')switchView('projects',id);else if(t==='treenode')openNodeOverview(id);else openPreview(id);}
 document.addEventListener('click',e=>{const c=e.target.closest('.ref-chip');if(!c)return;openRefObject(c.dataset.rt,c.dataset.rid);});
-function openThoughtForItem(itemId){const it=db.items.find(x=>x.id===itemId);if(!it)return;openThoughtFrom(it.type,it.id,it.projectId||null);}
-function openThoughtFrom(refType,refId,inheritProjectId){openItemModal(inheritProjectId||null);selectItemType('thought');if(refType){document.getElementById('itemRefType').value=refType;buildRefObjectSelect();document.getElementById('itemRefObject').value=refId;}}
+function openThoughtFrom(refType,refId){openItemModal(null);selectItemType('thought');if(refType){document.getElementById('itemRefType').value=refType;buildRefObjectSelect();document.getElementById('itemRefObject').value=refId;}}
 
+
+function openThoughtForItem(item){const src=db.items.find(x=>x.id===item.id);openThoughtFrom(item.type,item.id);if(src&&src.projectId){try{buildProjectOptions(document.getElementById('itemProjectSelect'),src.projectId);}catch(e){}}}
+function onProjParentChange(){const pid=document.getElementById('projParentSelect').value;const pc=document.getElementById('projColor');if(!pid){pc.value='#4f8ef7';return;}const pp=getProjectById(pid);pc.value=pp?safeColor(pp.color):'#4f8ef7';}
+function onSnParentChange(){const pv=document.getElementById('snParent')?document.getElementById('snParent').value:'';if(!pv)return;for(const t of db.skillTrees){const p=t.nodes.find(n=>n.id===pv);if(p){const sel=document.getElementById('snCat');if(sel)sel.value=p.categoryId;return;}}}
+function renderNotes(){const box=document.getElementById('revBodyNotes');if(!box)return;const notes=Array.isArray(db.notes)?db.notes:[];let html='<div class="section-card"><div class="section-title">📝 Заметки</div><div style="display:flex;gap:6px;margin-bottom:10px;"><input type="text" id="noteNewTitle" placeholder="Новая заметка..." style="flex:1;"><button class="small-btn" onclick="addNote()">+ Добавить</button></div>';if(!notes.length)html+='<div class="empty-msg">Заметок нет</div>';notes.forEach(n=>{html+=`<div class="template-row"><div><div class="template-name">${escapeHtml(n.title)}</div><div class="template-sub">${escapeHtml(n.text||'')}</div></div><div style="display:flex;gap:6px;"><button class="small-btn" onclick="editNote('${n.id}')">✏️</button><button class="small-btn danger-btn" onclick="deleteNote('${n.id}')">🗑</button></div></div>`;});html+='</div>';box.innerHTML=html;}
+function addNote(){const inp=document.getElementById('noteNewTitle');const t=inp?inp.value.trim():'';if(!t){toast('Введите текст заметки','danger');return;}if(!Array.isArray(db.notes))db.notes=[];db.notes.push({id:generateId(),title:t,text:'',createdAt:new Date().toISOString()});saveDb();renderNotes();toast('Заметка добавлена','success');}
+function editNote(id){const n=(db.notes||[]).find(x=>x.id===id);if(!n)return;const t=prompt('Текст заметки:',n.title);if(t===null)return;n.title=t.trim()||n.title;saveDb();renderNotes();toast('Изменено','success');}
+async function deleteNote(id){if(!await uiConfirm('Удалить заметку?','Удалить?','Удалить',true))return;db.notes=(db.notes||[]).filter(x=>x.id!==id);saveDb();renderNotes();toast('Удалено','success');}
+let problemFilter='all';
+function setProblemFilter(f){problemFilter=f;renderProblems();}
+function renderProblems(){
+  const box=document.getElementById('revBodyProblems');if(!box)return;
+  const problems=db.items.filter(i=>i.type==='problem');
+  const open=problems.filter(i=>i.problemStatus!=='solved');
+  const cut=Date.now()-90*86400000;
+  const solved=problems.filter(i=>i.problemStatus==='solved'&&i.doneDate&&Date.parse(i.doneDate)>=cut);
+  const sevAvg=solved.length?solved.reduce((a,i)=>a+(i.severity||0),0)/solved.length:null;
+  const durs=solved.map(i=>(i.doneDate&&i.date)?(Date.parse(i.doneDate)-Date.parse(i.date))/86400000:null).filter(v=>v!=null&&v>=0);
+  const durAvg=durs.length?durs.reduce((a,b)=>a+b,0)/durs.length:null;
+  const xpTotal=solved.reduce((a,i)=>{const s=db.items.find(x=>x.type==='solution'&&x.closesProblemId===i.id);return a+((s&&s.xpAwarded)||0);},0);
+  let html='<div class="stats-row">';
+  html+=`<div class="stat-box"><div class="stat-num">${open.length}</div><div class="stat-cap">открыто</div></div>`;
+  html+=`<div class="stat-box"><div class="stat-num" style="color:var(--success)">${solved.length}</div><div class="stat-cap">решено за 90 дн.</div></div>`;
+  html+=`<div class="stat-box"><div class="stat-num" style="color:var(--problem)">${sevAvg!=null?moodBadge(Math.round(sevAvg*10)/10):'—'}</div><div class="stat-cap">ср. острота</div></div>`;
+  html+=`<div class="stat-box"><div class="stat-num">${durAvg!=null?durAvg.toFixed(1):'—'}</div><div class="stat-cap">ср. срок, дн.</div></div>`;
+  html+=`<div class="stat-box"><div class="stat-num" style="color:var(--skill)">${xpTotal?'+'+xpTotal:0}</div><div class="stat-cap">⚡ XP решений</div></div></div>`;
+  html+='<div class="filter-bar"><div class="filter-chip'+(problemFilter==='all'?' active':'')+'" onclick="setProblemFilter(\'all\')">Все</div><div class="filter-chip'+(problemFilter==='open'?' active':'')+'" onclick="setProblemFilter(\'open\')">Открытые</div><div class="filter-chip'+(problemFilter==='solved'?' active':'')+'" onclick="setProblemFilter(\'solved\')">Решённые</div></div>';
+  const list=problemFilter==='open'?open:(problemFilter==='solved'?problems.filter(i=>i.problemStatus==='solved'):problems);
+  if(!list.length)html+='<div class="empty-msg">Проблем нет</div>';
+  list.forEach(i=>{
+    const manual=i.problemStatus==='solved'&&!i.closedBySolutionId;
+    html+=`<div class="list-row" onclick="openPreview('${i.id}')"><div class="list-row-title">🧩 ${escapeHtml(i.title)}</div><div class="list-row-sub">${i.date?i.date+' · ':''}${i.problemStatus==='solved'?'решена':'открыта'}${i.severity?' · '+moodBadge(i.severity):''}${manual?' · решена вручную, решения нет':''}</div></div>`;
+  });
+  box.innerHTML=html;
+}
 // ===== СПРАВКА =====
 function openHelp(){setHelpTab('approach');document.getElementById('helpModal').classList.add('open');}
 function setHelpTab(tab){['Approach','Howto','Skills','History'].forEach(t=>{const k=t.toLowerCase();document.getElementById('helpTab'+t).classList.toggle('active',k===tab);document.getElementById('helpBody'+t).style.display=k===tab?'block':'none';});}
